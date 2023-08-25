@@ -9,11 +9,21 @@ import java.util.List;
 @Table(name = "users", schema = "public")
 public class UserEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long uuid;
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    private String email;
     private UserStatus userStatus;
     private String userName;
     private String password;
@@ -34,12 +44,12 @@ public class UserEntity{
     public void setRolesList(List<RoleEntity> rolesList) {
         this.roles = rolesList;
     }
-    public Long getId() {
-        return id;
+    public Long getUuid() {
+        return uuid;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUuid(Long uuid) {
+        this.uuid = uuid;
     }
 
     public String getFirstName() {

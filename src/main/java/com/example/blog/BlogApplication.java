@@ -66,7 +66,7 @@ public class BlogApplication {
 			//Create a Normal User
 			if(userRepository.count() == 0){
 				UserEntity normalUser = new UserEntity();
-				normalUser.setId(100L);
+				normalUser.setUuid(100L);
 				normalUser.setUserName("Nazmul123");
 				normalUser.setFirstName("Ahsan");
 				normalUser.setLastName("nazmul");

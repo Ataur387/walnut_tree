@@ -1,6 +1,5 @@
 package com.example.blog.Services;
 
-import com.example.blog.DTO.UserDTO.LoginDTO;
 import com.example.blog.DTO.UserDTO.UserCreateDTO;
 import com.example.blog.DTO.UserDTO.UserResponseDTO;
 import com.example.blog.Entity.*;
@@ -21,13 +20,15 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final BillingAddressRepository billingAddressRepo;
     private final CardInformationRepository cardInformationRepo;
+    private final EmailService emailService;
     ModelMapper modelMapper = new ModelMapper();
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, BillingAddressRepository billingAddress, CardInformationRepository cardInformation) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, BillingAddressRepository billingAddress, CardInformationRepository cardInformation, EmailService emailService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.billingAddressRepo = billingAddress;
         this.cardInformationRepo = cardInformation;
+        this.emailService = emailService;
     }
     public UserResponseDTO createUser(UserCreateDTO userCreateDTO){
         UserResponseDTO userResponseDTO = new UserResponseDTO();
@@ -77,8 +78,20 @@ public class UserService {
             bindUserData(userCreateDTO, newUser);
             newUser = userRepository.save(newUser);
             modelMapper.map(newUser, userResponseDTO);
+            sendConfirmationMail(newUser);
         }
         return userResponseDTO;
+    }
+
+    private void sendConfirmationMail(UserEntity newUser) {
+        String registrationLink = "http://127.0.0.1:8080/users/email-confirmation/" + newUser.getEmail();
+        String disguisedLinkText = "Click here to validate your email: " + registrationLink;
+
+        String emailText = "Hello " + newUser.getFirstName() + ",\n\n"
+                + "Thank you for registering with our platform. "
+                + "To complete your registration, please " + disguisedLinkText + "\n\n"
+                + "If you did not request this registration, please ignore this email.";
+        emailService.sendEmail(newUser.getEmail(), "Registration", emailText);
     }
 
     private boolean validateAge(UserCreateDTO dto) {
@@ -89,7 +102,8 @@ public class UserService {
         user.setUserName(userCreateDTO.getUserName());
         user.setPassword(userCreateDTO.getPassword());
         user.setUserStatus(userCreateDTO.getStatus());
-        user.setDateOfBirth(userCreateDTO.getDateOfBirth().toLocalDate());
+        if(userCreateDTO.getDateOfBirth() != null)user.setDateOfBirth(userCreateDTO.getDateOfBirth().toLocalDate());
+        user.setEmail(userCreateDTO.getEmail());
         user.setLastName(userCreateDTO.getLastName());
         user.setFirstName(userCreateDTO.getFirstName());
         List<RoleEntity> roleEntityList = new ArrayList<>();
@@ -213,6 +227,12 @@ public class UserService {
         proUser.setFirstName(existingUser.getFirstName());
         proUser.setRolesList(existingUser.getRolesList());
         proUser.setPassword(existingUser.getPassword());
+    }
+
+    public void updateStatus(String address) {
+        UserEntity userEntity = userRepository.findByEmail(address);
+        userEntity.setUserStatus(UserStatus.ACTIVE);
+        userRepository.save(userEntity);
     }
 
 //    public void authenticate(LoginDTO loginDTO) {

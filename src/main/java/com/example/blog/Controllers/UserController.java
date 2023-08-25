@@ -31,5 +31,9 @@ public class UserController {
     public UserResponseDTO updateUser(@PathVariable String uuid, UserCreateDTO dto){
         return userService.updateUser(uuid, dto);
     }
-
+    @GetMapping("/email-confirmation/{address}")
+    public String emailConfirmation(@PathVariable String address){
+        userService.updateStatus(address);
+        return "Thanks For Registering with us. We will be in touch";
+    }
 }

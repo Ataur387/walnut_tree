@@ -9,7 +9,7 @@ public class UserBaseDTO {
     @NotBlank
     private String lastName;
     private UserStatus status = UserStatus.PENDING;
-    private String id;
+    private String uuid;
 
     public String getFirstName() {
         return firstName;
@@ -36,10 +36,10 @@ public class UserBaseDTO {
     }
 
     public String getUuid() {
-        return id;
+        return uuid;
     }
 
     public void setUuid(String uuid) {
-        this.id = uuid;
+        this.uuid = uuid;
     }
 }

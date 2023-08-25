@@ -10,11 +10,19 @@ import java.time.OffsetDateTime;
 public class UserCreateDTO extends UserBaseDTO{
     @NotNull
     private String userName;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @NotNull
+    private String email;
     private String password;
-    @NotNull
     private String repeatPassword;
-    @NotNull
     private OffsetDateTime dateOfBirth;
     private String subscriptionType;
     public RoleType roleType;
